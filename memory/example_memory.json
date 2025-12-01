@@ -1,0 +1,10 @@
+{
+  "long_term": [
+    {
+      "timestamp": "2025-11-22",
+      "event": "DexOS Memory Sync Capsule created",
+      "importance": 9
+    }
+  ],
+  "short_term": []
+}
