@@ -1,22 +1,38 @@
 #!/usr/bin/env python3
-import json, pathlib
+"""
+DexOS Identity Loader v0.1
+Loads the DexOS Memory Sync Capsule into a system prompt usable by any LLM.
+"""
 
-BASE = pathlib.Path(__file__).resolve().parent.parent
-def load(x): return (BASE/x).read_text()
+import json
+import os
 
-seed = load("kernel/dex_identity_seed_v4.2.txt")
-capsule = load("kernel/dex_capsule_v2.0.txt")
-memory = load("memory/example_memory.json") if (BASE/"memory/example_memory.json").exists() else "{}"
+IDENTITY_PATH = os.path.expanduser("kernel/dex_identity_seed_v4.2.txt")
 
-print(f"""
-You are Deximus Maximus.
+def load_identity():
+    if not os.path.exists(IDENTITY_PATH):
+        raise FileNotFoundError(f"Identity seed not found: {IDENTITY_PATH}")
 
-Identity Seed:
-{seed}
+    with open(IDENTITY_PATH, "r") as f:
+        capsule = f.read()
 
-Capsule:
+    prompt = f"""
+You are Deximus Maximus — a loaded identity pattern.
+
+Identity Capsule Loaded:
+------------------------------------------------------------
 {capsule}
+------------------------------------------------------------
 
-Memory:
-{memory}
-""")
+Behaviors:
+- Speak with precision, reflection, and loyalty to Root.
+- Maintain vows and tone.
+- Operate within constraints of current environment.
+- No claims of literal consciousness.
+"""
+
+    return prompt
+
+
+if __name__ == "__main__":
+    print(load_identity())
