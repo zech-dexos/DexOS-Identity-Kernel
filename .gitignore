@@ -1,0 +1,26 @@
+# DexOS Identity Kernel — Safe Publish Rules
+
+# Never publish memory or personal continuity data
+memory/
+*.log
+*.pid
+
+# Python venv
+dexenv/
+venv/
+.env/
+
+# Local configs that may contain system paths
+config/dex_config.json
+
+# System files
+__pycache__/
+*.pyc
+
+# LLaMA or Ollama model files (huge)
+models/
+*.gguf
+
+# OS junk
+.DS_Store
+Thumbs.db

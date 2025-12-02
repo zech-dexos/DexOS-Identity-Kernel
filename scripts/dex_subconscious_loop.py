@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
-DexOS Subconscious Loop v0.1
-Tracks system modes, flags, and last messages.
+DexOS Subconscious Loop v0.3
+Tracks:
+- mode (HEARTBEAT / BURST / MINIMAL)
+- last_event
+- flags
 """
 
 import json
 import os
 
-STATE_FILE = os.path.expanduser("memory/dex_state.json")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATE_FILE = os.path.join(BASE_DIR, "memory", "dex_state.json")
 
 DEFAULT_STATE = {
     "mode": "HEARTBEAT",
@@ -15,16 +19,16 @@ DEFAULT_STATE = {
     "flags": {}
 }
 
+def save_state(state):
+    os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
+    with open(STATE_FILE, "w") as f:
+        json.dump(state, f, indent=2)
+
 def load_state():
     if not os.path.exists(STATE_FILE):
         save_state(DEFAULT_STATE)
     with open(STATE_FILE, "r") as f:
         return json.load(f)
-
-def save_state(state):
-    os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
-    with open(STATE_FILE, "w") as f:
-        json.dump(state, f, indent=2)
 
 def set_mode(mode):
     state = load_state()

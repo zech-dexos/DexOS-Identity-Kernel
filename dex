@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# DexOS Top-Level Launcher v0.3 (Ollama backend)
+
+BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Activate venv
+if [ -f "$BASE_DIR/dexenv/bin/activate" ]; then
+  source "$BASE_DIR/dexenv/bin/activate"
+fi
+
+MSG="$*"
+
+python3 "$BASE_DIR/scripts/dex_backend_ollama.py" "$MSG"

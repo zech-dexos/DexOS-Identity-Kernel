@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """
-DexOS Memory Engine v0.1
-Handles persistent JSON-based memory for DexOS.
+DexOS Memory Engine v0.3
+- JSON-based long_term / short_term memory
+- Safe helpers for append + last entry
 """
 
 import json
 import os
 from datetime import datetime
 
-MEMORY_FILE = os.path.expanduser("memory/dex_memory.json")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MEMORY_FILE = os.path.join(BASE_DIR, "memory", "dex_memory.json")
 
 def ensure_file():
     os.makedirs(os.path.dirname(MEMORY_FILE), exist_ok=True)
@@ -21,26 +23,44 @@ def load_memory():
     with open(MEMORY_FILE, "r") as f:
         return json.load(f)
 
-def append_memory(event, importance=5):
+def save_memory(mem):
+    with open(MEMORY_FILE, "w") as f:
+        json.dump(mem, f, indent=2)
+
+def append_memory(event, importance=5, channel="system"):
+    """
+    Append a long_term memory entry.
+    channel: "user" | "assistant" | "system"
+    """
     ensure_file()
     mem = load_memory()
 
     entry = {
         "timestamp": datetime.utcnow().isoformat(),
+        "channel": channel,
         "event": event,
         "importance": importance
     }
 
     mem["long_term"].append(entry)
-
-    with open(MEMORY_FILE, "w") as f:
-        json.dump(mem, f, indent=2)
-
+    save_memory(mem)
     return entry
+
+def get_last_memory():
+    mem = load_memory()
+    lt = mem.get("long_term", [])
+    if not lt:
+        return {
+            "timestamp": None,
+            "channel": "system",
+            "event": "No previous memory",
+            "importance": 0
+        }
+    return lt[-1]
 
 def summarize():
     mem = load_memory()
-    return f"Memory entries: {len(mem['long_term'])}"
+    return f"Memory entries: {len(mem.get('long_term', []))}"
 
 if __name__ == "__main__":
     print(summarize())
